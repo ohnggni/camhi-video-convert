@@ -14,8 +14,8 @@ def is_old_enough(file_path):
     file_mtime = os.path.getmtime(file_path)
     return (current_time - file_mtime) > TIME_THRESHOLD
 
-def convert_to_mp4(file_path):
-    """265 파일을 MP4로 변환"""
+def convert_to_mkv(file_path):
+    """265 파일을 mkv로 변환"""
     output_path = file_path.replace(".265", ".mkv")
     command = [
         FFMPEG_PATH,
