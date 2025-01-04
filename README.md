@@ -1,4 +1,4 @@
-이 파일은 Aliexpress에서 판매하는 IP Camera의 CamHi앱에서 ftp로 Alram recording을 실시하는 경우 파일이 확장자265로 저장되어 재생호환성이 떨어지므로 이를 보완하기 위해 mkv로 변환하는 스크립트이다.
+이 파일은 Aliexpress에서 판매하는 IP Camera의 CamHi앱에서 ftp로 Alram recording을 실시하는 경우 파일이 확장자265로 저장되어 재생호환성이 떨어지므로 이를 보완하기 위해 mp4로 변환하는 스크립트이다.
 
 #### 0. FTP 서버설치 및 설정
 ```
@@ -29,11 +29,11 @@ nano /etc/systemd/system/convert_script.service
 ```
 ```
 [Unit]
-Description=265 to MKV Conversion Script
+Description=265 to MP4 Conversion Script
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /path/to/convert_265_to_mkv.py
+ExecStart=/usr/bin/python3 /path/to/convert_265_to_mp4.py
 WorkingDirectory=/home/ohnggni
 Restart=always
 User=ohnggni
