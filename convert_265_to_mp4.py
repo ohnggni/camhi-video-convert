@@ -35,16 +35,6 @@ def convert_to_mp4(file_path):
     except Exception as e:
         print(f"[{datetime.now()}] Unexpected error: {e}")
 
-def move_to_parent_dir(file_path):
-    """변환된 MKV 파일을 한 단계 상위 디렉토리로 이동"""
-    parent_dir = os.path.dirname(os.path.dirname(file_path))  # 상위 디렉토리 경로 계산
-    destination_path = os.path.join(parent_dir, os.path.basename(file_path))  # 최종 이동 경로
-    try:
-        shutil.move(file_path, destination_path)
-        print(f"[{datetime.now()}] Moved: {file_path} -> {destination_path}")
-    except Exception as e:
-        print(f"[{datetime.now()}] Failed to move {file_path}: {e}")
-
 def move_existing_files(directory):
     """현재 디렉토리에 남아 있는 mp4 또는 mkv 파일을 상위 디렉토리로 이동"""
     try:
