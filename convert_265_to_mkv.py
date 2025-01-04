@@ -14,9 +14,9 @@ def is_old_enough(file_path):
     file_mtime = os.path.getmtime(file_path)
     return (current_time - file_mtime) > TIME_THRESHOLD
 
-def convert_to_mkv(file_path):
-    """265 파일을 mkv로 변환"""
-    output_path = file_path.replace(".265", ".mkv")
+def convert_to_mp4(file_path):
+    """265 파일을 mp4로 변환"""
+    output_path = file_path.replace(".265", ".mp4")
     command = [
         FFMPEG_PATH,
         "-y",                      # 동일한 파일 덮어쓰기
@@ -35,15 +35,23 @@ def convert_to_mkv(file_path):
     except Exception as e:
         print(f"[{datetime.now()}] Unexpected error: {e}")
 
-def move_to_parent_dir(file_path):
-    """변환된 MKV 파일을 한 단계 상위 디렉토리로 이동"""
-    parent_dir = os.path.dirname(os.path.dirname(file_path))  # 상위 디렉토리 경로 계산
-    destination_path = os.path.join(parent_dir, os.path.basename(file_path))  # 최종 이동 경로
+def move_existing_files(directory):
+    """현재 디렉토리에 남아 있는 mp4 또는 mkv 파일을 상위 디렉토리로 이동"""
     try:
-        shutil.move(file_path, destination_path)
-        print(f"[{datetime.now()}] Moved: {file_path} -> {destination_path}")
+        # 디렉토리 내의 mp4/mkv 파일 검색
+        for file in os.listdir(directory):
+            if file.endswith(".mp4") or file.endswith(".mkv"):
+                file_path = os.path.join(directory, file)
+
+                # 상위 디렉토리 경로 계산
+                parent_dir = os.path.dirname(directory)
+                destination_path = os.path.join(parent_dir, file)
+
+                # 파일 이동
+                shutil.move(file_path, destination_path)
+                print(f"[{datetime.now()}] Moved: {file_path} -> {destination_path}")
     except Exception as e:
-        print(f"[{datetime.now()}] Failed to move {file_path}: {e}")
+        print(f"[{datetime.now()}] Error moving files in {directory}: {e}")
 
 def monitor_directory(directory):
     """디렉토리를 모니터링하며 변환 및 이동 작업 수행"""
@@ -55,13 +63,15 @@ def monitor_directory(directory):
             for file in files:
                 if file.endswith(".265"):
                     file_path = os.path.join(root, file)
+
+                    # 1. 변환 직전에 같은 디렉토리의 기존 mp4/mkv 파일을 상위 디렉토리로 이동
+                    move_existing_files(root)
+
+                    # 2. 변환 실행
                     if file_path not in processed_files and is_old_enough(file_path):
-                        # MKV 변환
-                        converted_file = convert_to_mkv(file_path)
+                        converted_file = convert_to_mp4(file_path)
                         if converted_file:
-                            # 상위 디렉토리로 이동
-                            move_to_parent_dir(converted_file)
-                        processed_files.add(file_path)
+                            processed_files.add(file_path)  # 변환 완료된 파일 기록
         time.sleep(30)  # 30초마다 디렉토리 확인
 
 if __name__ == "__main__":
